@@ -13,6 +13,8 @@ It includes classic arcade-style mechanics with modern features like mobile touc
 ## Want to Play
 https://sanjai0412.github.io/Brick-Breakers/
 
+## 📷 Preview (Optional GIF/Screenshot)
+![Game Preview](Screenshot%20(45).png)
 
 ## 🧠 Gameplay Mechanics
 
@@ -35,7 +37,5 @@ https://sanjai0412.github.io/Brick-Breakers/
 - **HTML5 Canvas**
 - **JavaScript (ES6)**
 - Fully responsive with **touch support** for mobile play
-
-## 📷 Preview (Optional GIF/Screenshot)
 
 
