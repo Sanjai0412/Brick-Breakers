@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Brick Breaker Game</title>
+    <style>
+        body {
+            background-color: #121212;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            color: white;
+        }
+        #game-interface {
+            border: 2px solid white;
+            background-color: black;
+        }
+        #score {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="score">Score : 0</div>
+    <p id="high-score">High Score : 0</p>
+    <canvas id="game-interface"></canvas>
+    <div id="left-touch" style="position: absolute; left: 0; bottom: 0; width: 50%; height: 100%; z-index: 99;"></div>
+    <div id="right-touch" style="position: absolute; right: 0; bottom: 0; width: 50%; height: 100%; z-index: 99;"></div>
+
+
+    <script src="script.js"></script> 
+</body>
+</html>
