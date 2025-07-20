@@ -11,7 +11,7 @@ It includes classic arcade-style mechanics with modern features like mobile touc
 - Press `R` to **Restart** the game.
 
 ## Want to Play
-https://sanjai0412.github.io/Brick-Breakers/
+[Click to Play](https://sanjai0412.github.io/Brick-Breakers/)
 
 ## 📷 Preview (Optional GIF/Screenshot)
 ![Game Preview](Screenshot%20(45).png)
