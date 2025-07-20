@@ -1,3 +1,4 @@
+// Brick Class
 class Brick {
   constructor(canva, context, rows, columns, color) {
     this.canva = canva;
@@ -5,7 +6,6 @@ class Brick {
     this.rows = rows;
     this.columns = columns;
     this.color = color;
-
     this.bricks = [];
     this.size = canva.width / this.columns;
   }
@@ -45,17 +45,14 @@ class Brick {
   }
 }
 
+// Ball Class
 class Ball {
   constructor(canva, context, size, speed) {
     this.canva = canva;
     this.context = context;
     this.size = size;
     this.speed = speed;
-
-    this.ballScale = {
-      x: canva.width / 2,
-      y: canva.height / 3,
-    };
+    this.ballScale = { x: canva.width / 2, y: canva.height / 3 };
     this.xVel = speed;
     this.yVel = speed;
   }
@@ -92,17 +89,14 @@ class Ball {
   }
 }
 
+// Paddle Class
 class Paddle {
   constructor(canva, context, size, speed) {
     this.canva = canva;
     this.context = context;
     this.size = size;
     this.speed = speed;
-
-    this.paddleScale = {
-      x: canva.width / 2,
-      y: canva.height - 10,
-    };
+    this.paddleScale = { x: canva.width / 2, y: canva.height - 10 };
   }
 
   displaySlide() {
@@ -124,30 +118,21 @@ class Paddle {
   }
 
   checkPaddle() {
-    if (this.paddleScale.x <= 0) {
-      this.paddleScale.x = 0;
-    }
-    if (this.paddleScale.x + this.size >= this.canva.width) {
+    if (this.paddleScale.x <= 0) this.paddleScale.x = 0;
+    if (this.paddleScale.x + this.size >= this.canva.width)
       this.paddleScale.x = this.canva.width - this.size;
-    }
   }
 }
 
-// Setup
+// Setup and Global Variables
 const gameInterface = document.getElementById("game-interface");
 gameInterface.height = 400;
 gameInterface.width = 400;
-
 const ctx = gameInterface.getContext("2d");
-const keyPress = {
-  left: false,
-  right: false,
-};
-
+const keyPress = { left: false, right: false };
 let score = 0;
 let points = 0;
 let highScore = localStorage.getItem("highScore") || 0;
-
 const scoreCard = document.getElementById("score");
 const highScoreCard = document.getElementById("high-score");
 highScoreCard.innerHTML = `High Score : ${highScore}`;
@@ -155,10 +140,14 @@ highScoreCard.innerHTML = `High Score : ${highScore}`;
 let ball = new Ball(gameInterface, ctx, 7, 3);
 let paddle = new Paddle(gameInterface, ctx, 70, 5);
 let brick = new Brick(gameInterface, ctx, 4, 7, "gray");
-
 brick.createBricks();
 
+let isPaused = false;
+let animationId;
+
+// Game Loop
 function gameLoop() {
+  if (isPaused) return;
   if (isGameOver()) {
     endGame("Game Over !");
     return;
@@ -168,11 +157,10 @@ function gameLoop() {
     return;
   }
 
-  points += 1;
+  points++;
   if (points > 5) {
-    score += 1;
+    score++;
     points = 0;
-
     if (score > highScore) {
       highScore = score;
       localStorage.setItem("highScore", highScore);
@@ -181,30 +169,26 @@ function gameLoop() {
   }
 
   scoreCard.innerHTML = `Score : ${score}`;
-
   clearBoard();
   brick.displayBricks();
   brick.checkCollision(ball);
-
   ball.wallDetection();
   ball.moveBall();
   paddleBallCollision();
   ball.displayBall();
-
   if (keyPress.left) paddle.moveLeft();
   if (keyPress.right) paddle.moveRight();
   paddle.checkPaddle();
   paddle.displaySlide();
-
-  requestAnimationFrame(gameLoop);
+  animationId = requestAnimationFrame(gameLoop);
 }
 
+// Collision
 function paddleBallCollision() {
   const ballBottom = ball.ballScale.y + ball.size;
   const paddleLeft = paddle.paddleScale.x;
   const paddleRight = paddleLeft + paddle.size;
   const paddleTop = paddle.paddleScale.y;
-
   const leftThird = paddleLeft + paddle.size / 3;
   const rightThird = paddleLeft + 2 * (paddle.size / 3);
 
@@ -220,13 +204,8 @@ function paddleBallCollision() {
     } else {
       ball.xVel = (Math.random() - 0.5) * 1.5;
     }
-
-    if (keyPress.left) {
-      ball.xVel -= 1;
-    } else if (keyPress.right) {
-      ball.xVel += 1;
-    }
-
+    if (keyPress.left) ball.xVel -= 1;
+    else if (keyPress.right) ball.xVel += 1;
     ball.yVel = -(ball.speed + 1);
   }
 }
@@ -242,21 +221,35 @@ function endGame(text) {
   ctx.fillText(text, gameInterface.width / 2, gameInterface.height / 2);
 }
 
-function resetHighScore() {
-  localStorage.removeItem("highScore");
-  highScore = 0;
-  highScoreCard.innerHTML = `High Score : ${highScore}`;
-}
-
 function clearBoard() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, gameInterface.width, gameInterface.height);
 }
 
-// Input Events
+function resetGame() {
+  score = 0;
+  points = 0;
+  scoreCard.innerHTML = "Score : 0";
+  ball = new Ball(gameInterface, ctx, 7, 3);
+  paddle = new Paddle(gameInterface, ctx, 70, 5);
+  brick = new Brick(gameInterface, ctx, 4, 7, "gray");
+  brick.createBricks();
+  isPaused = false;
+}
+
+// Controls
 window.addEventListener("keydown", (e) => {
   if (e.keyCode === 37) keyPress.left = true;
   if (e.keyCode === 39) keyPress.right = true;
+  if (e.code === "Space") {
+    isPaused = !isPaused;
+    if (!isPaused) gameLoop();
+  }
+  if (e.key === "r" || e.key === "R") {
+    cancelAnimationFrame(animationId);
+    resetGame();
+    gameLoop();
+  }
 });
 
 window.addEventListener("keyup", (e) => {
@@ -264,14 +257,12 @@ window.addEventListener("keyup", (e) => {
   if (e.keyCode === 39) keyPress.right = false;
 });
 
-// control for Mobile
 const leftTouchZone = document.getElementById("left-touch");
 const rightTouchZone = document.getElementById("right-touch");
-
 leftTouchZone.addEventListener("touchstart", () => (keyPress.left = true));
 leftTouchZone.addEventListener("touchend", () => (keyPress.left = false));
-
 rightTouchZone.addEventListener("touchstart", () => (keyPress.right = true));
 rightTouchZone.addEventListener("touchend", () => (keyPress.right = false));
 
+// Start Game
 gameLoop();
